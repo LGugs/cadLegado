@@ -25,12 +25,12 @@ async function findHist(emp) {
     }
     
     // 10 registros de historico por padrão
-    //const limit = (emp.limit > 0) ? emp.limit : 10; // limita 10 resultados por padrão - // limit não funciona no 11g só no 12c pra cima. Portanto é para usar ROWNUM
+    const limit = (emp.limit > 0) ? emp.limit : 10; // limita 10 resultados por padrão - // limit não funciona no 11g só no 12c pra cima. Portanto é para usar ROWNUM
 
-    //juncao.row_limit = limit;
+    juncao.row_limit = limit;
 
-    //queryHist += `\nand ROWNUM <= :row_limit order by dt_inicial`;
-    queryHist += `\norder by dt_inicial`;
+    queryHist += `\nand ROWNUM <= :row_limit order by dt_inicial`;
+    //queryHist += `\norder by dt_inicial`;
     
 
     const resultado = await database.executar(queryHist, juncao);

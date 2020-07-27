@@ -36,7 +36,14 @@ router.get('/empresas/:emp_cnpj?', async (req, res, next) => {
 router.get('/historico/:emp_cnpj?', async (req, res, next) => {
     try {
         // garanto saber se existe um dos dois atributos de filtro, para evitar de chamar uma pesquisa desnecessária no banco.
-        if(req.params.emp_cnpj || req.params.emp_insc) {
+
+        // url de exemplo: http://localhost:3000/api/historico/04686208000167/?emp_insc=200112929&limit=1
+
+        // lembrando que params é o valor após a barra -> /historico/04686208000167
+        // e query são os valores de filtro -> /historico?emp_insc=200112929&limit=1
+
+
+        if(req.params.emp_cnpj || req.query.emp_insc) {
 
             const emp = {};
 
