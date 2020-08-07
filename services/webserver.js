@@ -3,12 +3,13 @@ const express = require('express');
 const config = require('../config/app.js');
 const router = require('./router.js');
 const morgan = require('morgan');
+const cors = require('cors');
 
 let httpServer;
 
 function initialize() {
     return new Promise((resolve, reject) => {
-        const app = express();
+        const app = express().use(cors()); // utilizando cors, para que minha api aceite requests de outras origens
         httpServer = http.createServer(app);
 
         app.use(morgan('dev')); // ou combine
