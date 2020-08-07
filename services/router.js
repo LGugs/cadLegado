@@ -9,25 +9,36 @@ const bloqueios = require('../db_apis/bloqueios.js');
 // inserir o auth.required caso necessite de autenticação e fazer ele apontar pro serviço de autenticação
 router.get('/empresas/:emp_cnpj?', async (req, res, next) => {
     try {
-        const emp = {};
 
-        //emp.emp_cnpj = parseInt(req.params.emp_cnpj, 10); // converte para numero decimal, mas emp_cnpj é uma string
+        if(req.params.emp_cnpj || req.query.emp_insc){
+            const emp = {};
 
-        emp.emp_cnpj = req.params.emp_cnpj;
+            //emp.emp_cnpj = parseInt(req.params.emp_cnpj, 10); // converte para numero decimal, mas emp_cnpj é uma string
 
-        //emp.skip = parseInt(req.query.skip, 10);
-        emp.limit = parseInt(req.query.limit, 10);
+            emp.emp_cnpj = req.params.emp_cnpj;
+            emp.emp_insc = parseInt(req.query.emp_insc);
 
-        const rows = await empresas.findEmp(emp);
+            //emp.skip = parseInt(req.query.skip, 10);
+            emp.limit = parseInt(req.query.limit, 10);
 
-        if(req.params.emp_cnpj) {
-            if(rows.length === 1){
-                res.status(200).json(rows[0]);
-            } else {
-                res.status(404).end(); // .end() finaliza a response sem atribuir o Content-Type e Etag no cabeçalho HTTP. Só utilizar quando não há mensagens a serem enviadas.
+            const rows = await empresas.findEmp(emp);
+
+           if(rows.length > 0) {
+                for (let x = 0; x < rows.length; x++) {
+                    if(rows[x].sit === 2){
+                        rows[x].sit = 'Ativa'
+                    }else if(rows [x].sit === 1){
+                        rows[x].sit = 'Bloqueada'
+                    }else if(rows [x].sit === 3){
+                        rows[x].sit = 'Cancelada'
+                    }
+                }
+                res.status(200).json(rows);
+            }else{
+                res.status(404).end();
             }
         }else{
-            res.status(200).json(rows);
+            res.status(406).send('CNPJ ou Inscrição não informados!');
         }
     } catch (err) {
         next(err);
