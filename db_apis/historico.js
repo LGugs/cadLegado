@@ -1,7 +1,8 @@
 const database = require ('../services/db.js');
 
 async function findHist(emp) {
-    let queryHist = `select * from pss.csuf_old_ce_situacao`;
+    let queryHist = `select b.sit_descricao "sit", a.dt_inicial "dt_inicial", a.dt_fim "dt_fim", a.motivo_ini, a.motivo_fim from pss.csuf_old_ce_situacao a join pss.csuf_situacao b on a.sit = b.sit_cd`;
+
     let status = 0;
     const juncao = {};
 

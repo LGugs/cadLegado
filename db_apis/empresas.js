@@ -1,26 +1,38 @@
 const database = require ('../services/db.js');
 
 async function findEmp(emp) {
-    let queryEmp = `select emp_cnpj "cnpj", emp_razao_social "razao_social"`;
-
+    let queryEmp = `select a.emp_cnpj "cnpj", a.emp_razao_social "razao_social", b.inscsuf "insc", c.set_descricao "tipo", b.sit "sit" from pss.csuf_empresa a 
+    join pss.csuf_old_inscsuf b on a.emp_cnpj = b.emp_cnpj
+    join pss.csuf_setor c on c.set_cd = b.set_cd`;
+    var status = 0;
     const juncao = {};
 
-    // se especificar um CNPJ, retornará informações mais detalhadas
     if (emp.emp_cnpj){
-        
+        status = 1;
         juncao.emp_cnpj = emp.emp_cnpj;
+        queryEmp += `\nwhere a.emp_cnpj = :emp_cnpj`;
 
-        queryEmp += `, emp_porte "porte", emp_opt_simples "opt_simples", emp_logradouro "logradouro", emp_bairro "bairro" from pss.csuf_empresa\nwhere emp_cnpj = :emp_cnpj`;
+    }
 
-    }else{
+    if (emp.emp_insc){
+        juncao.emp_insc = emp.emp_insc;
+        if(status === 0){
+            queryEmp += `\nwhere inscsuf = :emp_insc`;
+        } else {
+            queryEmp += `\nand inscsuf = :emp_insc`;
+        }
+
+    }
+    
+    /*else{
         // senão, retornará uma lista de empresas
         const limit = (emp.limit > 0) ? emp.limit : 10; // limita 10 resultados por padrão - // limit não funciona no 11g só no 12c pra cima. Portanto é para usar ROWNUM
 
         juncao.row_limit = limit;
 
-        queryEmp += `\nfrom pss.csuf_empresa where ROWNUM <= :row_limit`;
+        queryEmp += `\nwhere ROWNUM <= :row_limit`;
 
-    }
+    }*/
 
     const resultado = await database.executar(queryEmp, juncao);
 
