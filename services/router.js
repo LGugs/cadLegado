@@ -2,6 +2,7 @@ const router = require('express').Router();
 const empresas = require('../db_apis/empresas.js');
 const historico = require('../db_apis/historico.js');
 const bloqueios = require('../db_apis/bloqueios.js');
+const dateFormat = require('dateformat');
 
 // caso eu utilize o controller para realizar as operações desta rota
 //router.route('/empresa/:id?').get(empresas.get);
@@ -67,6 +68,10 @@ router.get('/historico/:emp_cnpj?', async (req, res, next) => {
             const rows = await historico.findHist(emp);
         
             if(rows.length > 0){
+                for (let x = 0; x < rows.length; x++) {
+                    rows[x].dt_inicial = dateFormat(rows[x].dt_inicial, "dd/mm/yyyy");
+                    rows[x].dt_fim = dateFormat(rows[x].dt_fim, "dd/mm/yyyy");
+                }
                 res.status(200).json(rows);
             } else {
                 res.status(404).end(); // caso não tenha registro de histórico
