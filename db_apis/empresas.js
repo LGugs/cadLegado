@@ -1,9 +1,11 @@
 const database = require ('../services/db.js');
 
 async function findEmp(emp) {
-    let queryEmp = `select a.emp_cnpj "cnpj", a.emp_razao_social "razao_social", b.inscsuf "insc", c.set_descricao "tipo", b.sit "sit" from pss.csuf_empresa a 
+    let queryEmp = `select a.emp_cnpj "cnpj", a.emp_razao_social "razao_social", b.inscsuf "insc", c.set_descricao "tipo", b.sit "sit", e.sset_descricao "subsetor" from pss.csuf_empresa a 
     join pss.csuf_old_inscsuf b on a.emp_cnpj = b.emp_cnpj
-    join pss.csuf_setor c on c.set_cd = b.set_cd`;
+    join pss.csuf_setor c on c.set_cd = b.set_cd
+    join pss.csuf_subsetor_emp d on b.inscsuf = d.inscsuf
+    join pss.csuf_subsetor e on e.set_cd = d.set_cd`;
     var status = 0;
     const juncao = {};
 

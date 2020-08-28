@@ -68,7 +68,7 @@ router.get('/historico/:emp_cnpj?', async (req, res, next) => {
             const rows = await historico.findHist(emp);
         
             if(rows.length > 0){
-                for (let x = 0; x < rows.length; x++) {
+                for (let x = 0; x < rows.length; x++) { // converter para o formato de data
                     rows[x].dt_inicial = dateFormat(rows[x].dt_inicial, "dd/mm/yyyy");
                     rows[x].dt_fim = dateFormat(rows[x].dt_fim, "dd/mm/yyyy");
                 }
